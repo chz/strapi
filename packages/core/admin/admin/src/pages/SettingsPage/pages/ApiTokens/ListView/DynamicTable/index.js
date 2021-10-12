@@ -5,13 +5,18 @@ import { Row } from '@strapi/parts/Row';
 import { RelativeTime } from '@strapi/helper-plugin';
 import { useIntl } from 'react-intl';
 import PropTypes from 'prop-types';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import DeleteButton from './DeleteButton';
 import UpdateButton from './UpdateButton';
 
 const TableRows = ({ canDelete, canUpdate, onClickDelete, withBulkActions, rows }) => {
   const { formatMessage } = useIntl();
   const { search } = useLocation();
+
+  const {
+    push,
+    location: { pathname },
+  } = useHistory();
 
   const apiTokens = rows.sort((a, b) => {
     const comparaison = a.name.localeCompare(b.name);
@@ -51,7 +56,12 @@ const TableRows = ({ canDelete, canUpdate, onClickDelete, withBulkActions, rows 
             {withBulkActions && (
               <Td>
                 <Row justifyContent="end">
-                  {canUpdate && <UpdateButton tokenName={apiToken.name} />}
+                  {canUpdate && (
+                    <UpdateButton
+                      tokenName={apiToken.name}
+                      onClickUpdate={() => push(`${pathname}/${apiToken.id}`)}
+                    />
+                  )}
                   {canDelete && (
                     <DeleteButton
                       tokenName={apiToken.name}
